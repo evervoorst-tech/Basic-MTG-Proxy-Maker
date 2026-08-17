@@ -5,7 +5,7 @@
     <title>Card Text Sheet Builder</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Creepster&family=Special+Elite&family=Comic+Neue:ital,wght@0,400;0,700;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Creepster&family=Special+Elite&family=Rye&family=IM+Fell+English:ital@0;1&family=Orbitron:wght@400;700&family=Share+Tech+Mono&family=Cinzel+Decorative:wght@700&family=MedievalSharp&display=swap"
       rel="stylesheet"
     />
     <link
@@ -27,7 +27,7 @@
       body {
         margin: 0;
         background: #3d3d3d;
-        font-family: "Comic Neue", sans-serif;
+        font-family: Arial, Helvetica, sans-serif;
         color: var(--ink);
       }
 
@@ -40,12 +40,12 @@
         border-bottom: 6px solid var(--ink);
       }
       .panel h1 {
-        font-family: "Bangers", cursive;
-        letter-spacing: 1px;
-        font-size: 34px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        font-size: 28px;
         margin: 6px 0 2px;
         color: var(--accent);
-        text-shadow: 1.5px 1.5px 0 var(--ink);
       }
       .panel p.sub {
         margin: 0 0 18px;
@@ -70,9 +70,10 @@
         margin-bottom: 2px;
       }
       input,
-      textarea {
+      textarea,
+      select {
         width: 100%;
-        font-family: "Comic Neue", sans-serif;
+        font-family: Arial, Helvetica, sans-serif;
         font-size: 14px;
         padding: 7px 8px;
         border: 2px solid var(--ink);
@@ -90,9 +91,10 @@
         flex-wrap: wrap;
       }
       button {
-        font-family: "Bangers", cursive;
-        font-size: 16px;
-        letter-spacing: 0.5px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        letter-spacing: 0.2px;
         padding: 9px 20px;
         border: 2px solid var(--ink);
         border-radius: 6px;
@@ -120,8 +122,9 @@
         margin-top: 20px;
       }
       .list h2 {
-        font-family: "Bangers", cursive;
-        font-size: 20px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: 700;
+        font-size: 18px;
         color: var(--ink);
         margin: 0 0 8px;
       }
@@ -144,9 +147,8 @@
         white-space: nowrap;
       }
       .card-row .meta b {
-        font-family: "Creepster", cursive;
-        font-size: 17px;
-        letter-spacing: 0.4px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
         margin-right: 8px;
       }
       .card-row .actions button {
@@ -165,7 +167,7 @@
         display: inline-block;
         background: var(--ink);
         color: #fff;
-        font-family: "Bangers", cursive;
+        font-family: Arial, Helvetica, sans-serif;
         font-size: 13px;
         padding: 2px 10px;
         border-radius: 20px;
@@ -213,7 +215,6 @@
         justify-content: space-between;
         align-items: baseline;
         gap: 3mm;
-        font-family: "Creepster", cursive;
         font-size: 13pt;
         letter-spacing: 0.5px;
       }
@@ -246,10 +247,8 @@
         font-family: "Comic Neue";
       }
       .type-line {
-        font-family: "Special Elite", monospace;
         font-size: 8pt;
         letter-spacing: 0.3px;
-        text-transform: uppercase;
         border-top: 0.8pt solid var(--ink);
         border-bottom: 0.8pt solid var(--ink);
         padding: 1mm 0.5mm;
@@ -258,7 +257,6 @@
         text-overflow: ellipsis;
       }
       .text-box {
-        font-family: "Special Elite", monospace;
         font-size: 7.3pt;
         line-height: 1.32;
         padding: 1.4mm 0.8mm 0.5mm;
@@ -326,12 +324,68 @@
         position: absolute;
         bottom: 2mm;
         right: 2mm;
-        font-family: "Creepster", cursive;
         font-size: 10pt;
         background: #fff;
         border: 1pt solid var(--ink);
         border-radius: 1mm;
         padding: 0.5mm 2mm;
+      }
+
+      /* ---------- CARD FONT THEMES ---------- */
+      .card.theme-comic .card-header,
+      .card.theme-comic .pt-box {
+        font-family: "Bangers", cursive;
+      }
+      .card.theme-comic .type-line,
+      .card.theme-comic .text-box {
+        font-family: "Comic Neue", sans-serif;
+      }
+
+      .card.theme-horror .card-header,
+      .card.theme-horror .pt-box {
+        font-family: "Creepster", cursive;
+      }
+      .card.theme-horror .type-line,
+      .card.theme-horror .text-box {
+        font-family: "Special Elite", monospace;
+      }
+      .card.theme-horror .type-line {
+        text-transform: uppercase;
+      }
+
+      .card.theme-oldtimey .card-header,
+      .card.theme-oldtimey .pt-box {
+        font-family: "Rye", cursive;
+      }
+      .card.theme-oldtimey .type-line,
+      .card.theme-oldtimey .text-box {
+        font-family: "IM Fell English", serif;
+      }
+      .card.theme-oldtimey .type-line {
+        font-style: italic;
+        letter-spacing: 0.6px;
+      }
+
+      .card.theme-cyberpunk .card-header,
+      .card.theme-cyberpunk .pt-box {
+        font-family: "Orbitron", sans-serif;
+      }
+      .card.theme-cyberpunk .type-line,
+      .card.theme-cyberpunk .text-box {
+        font-family: "Share Tech Mono", monospace;
+      }
+      .card.theme-cyberpunk .type-line {
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .card.theme-fantasy .card-header,
+      .card.theme-fantasy .pt-box {
+        font-family: "Cinzel Decorative", cursive;
+      }
+      .card.theme-fantasy .type-line,
+      .card.theme-fantasy .text-box {
+        font-family: "MedievalSharp", cursive;
       }
       .page-num {
         position: absolute;
@@ -501,6 +555,26 @@
             font-weight: 400;
           "
         >
+          Card font style:
+          <select id="f-theme" style="width: auto; flex: 0 0 auto">
+            <option value="theme-horror" selected>Horror</option>
+            <option value="theme-comic">Comic Book</option>
+            <option value="theme-oldtimey">Old Timey</option>
+            <option value="theme-cyberpunk">Cyberpunk</option>
+            <option value="theme-fantasy">Fantasy / Medieval</option>
+          </select>
+        </label>
+        <label
+          style="
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            text-transform: none;
+            font-size: 13px;
+            font-weight: 400;
+          "
+        >
           <input type="checkbox" id="f-distressed" style="width: auto" />
           Aged / faded print look (adds grain + muted ink, like a worn
           photocopy)
@@ -570,6 +644,7 @@
 
       el("print-btn").addEventListener("click", () => window.print());
       el("f-distressed").addEventListener("change", render);
+      el("f-theme").addEventListener("change", render);
       el("f-flavor-global").addEventListener("change", render);
 
       function toggleCardFlavor(i) {
@@ -824,8 +899,10 @@
             const cardDiv = document.createElement("div");
             const distressed = el("f-distressed").checked;
             const flavorGlobalOn = el("f-flavor-global").checked;
+            const theme = el("f-theme").value;
             if (c) {
-              cardDiv.className = "card" + (distressed ? " distressed" : "");
+              cardDiv.className =
+                `card ${theme}` + (distressed ? " distressed" : "");
               const showFlavor =
                 flavorGlobalOn && c.showFlavor !== false && c.flavor;
               cardDiv.innerHTML = `
