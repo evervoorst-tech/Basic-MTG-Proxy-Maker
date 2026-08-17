@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Card Text Sheet Builder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Creepster&family=Special+Elite&family=Comic+Neue:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/mana-font@latest/css/mana.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <style>
+      :root {
+        --ink: #1a1a1a;
+        --paper: #f4f1ea;
+        --accent: #c0392b;
+        --line: #1a1a1a;
+        --muted: #9a9a9a;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #3d3d3d;
+        font-family: "Comic Neue", sans-serif;
+        color: var(--ink);
+      }
+
+      /* ---------- CONTROL PANEL (screen only) ---------- */
+      .panel {
+        background: var(--paper);
+        padding: 20px 24px 28px;
+        max-width: 900px;
+        margin: 0 auto;
+        border-bottom: 6px solid var(--ink);
+      }
+      .panel h1 {
+        font-family: "Bangers", cursive;
+        letter-spacing: 1px;
+        font-size: 34px;
+        margin: 6px 0 2px;
+        color: var(--accent);
+        text-shadow: 1.5px 1.5px 0 var(--ink);
+      }
+      .panel p.sub {
+        margin: 0 0 18px;
+        font-size: 14px;
+        color: #555;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 100px;
+        gap: 8px 10px;
+      }
+      .form-grid .full {
+        grid-column: 1 / -1;
+      }
+      label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-weight: 700;
+        color: #444;
+        display: block;
+        margin-bottom: 2px;
+      }
+      input,
+      textarea {
+        width: 100%;
+        font-family: "Comic Neue", sans-serif;
+        font-size: 14px;
+        padding: 7px 8px;
+        border: 2px solid var(--ink);
+        border-radius: 4px;
+        background: #fff;
+      }
+      textarea {
+        resize: vertical;
+        min-height: 44px;
+      }
+      .btnrow {
+        margin-top: 12px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      button {
+        font-family: "Bangers", cursive;
+        font-size: 16px;
+        letter-spacing: 0.5px;
+        padding: 9px 20px;
+        border: 2px solid var(--ink);
+        border-radius: 6px;
+        background: var(--accent);
+        color: #fff;
+        cursor: pointer;
+        box-shadow: 2px 2px 0 var(--ink);
+      }
+      button:hover {
+        transform: translate(1px, 1px);
+        box-shadow: 1px 1px 0 var(--ink);
+      }
+      button.secondary {
+        background: #fff;
+        color: var(--ink);
+      }
+      button.ghost {
+        background: transparent;
+        color: #555;
+        box-shadow: none;
+        border-style: dashed;
+      }
+
+      .list {
+        margin-top: 20px;
+      }
+      .list h2 {
+        font-family: "Bangers", cursive;
+        font-size: 20px;
+        color: var(--ink);
+        margin: 0 0 8px;
+      }
+      .card-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        background: #fff;
+        border: 1.5px solid var(--ink);
+        border-radius: 6px;
+        padding: 8px 12px;
+        margin-bottom: 6px;
+        font-size: 13px;
+      }
+      .card-row .meta {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .card-row .meta b {
+        font-family: "Creepster", cursive;
+        font-size: 17px;
+        letter-spacing: 0.4px;
+        margin-right: 8px;
+      }
+      .card-row .actions button {
+        font-size: 12px;
+        padding: 4px 10px;
+        box-shadow: 1px 1px 0 var(--ink);
+      }
+      .empty-note {
+        font-size: 13px;
+        color: #777;
+        font-style: italic;
+        padding: 10px 0;
+      }
+
+      .count-badge {
+        display: inline-block;
+        background: var(--ink);
+        color: #fff;
+        font-family: "Bangers", cursive;
+        font-size: 13px;
+        padding: 2px 10px;
+        border-radius: 20px;
+        margin-left: 6px;
+      }
+
+      /* ---------- PRINT SHEETS ---------- */
+      .sheets {
+        padding: 30px 0 60px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+      }
+      .page {
+        background: #fff;
+        width: 210mm;
+        height: 297mm;
+        padding: 10mm;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+        display: grid;
+        grid-template-columns: repeat(3, 63mm);
+        grid-template-rows: repeat(3, 88mm);
+        gap: 3mm;
+        justify-content: center;
+        align-content: center;
+      }
+      .card {
+        width: 63mm;
+        height: 88mm;
+        border: 1.1pt solid var(--ink);
+        border-radius: 2.8mm;
+        padding: 2.4mm;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
+        background: #fff;
+      }
+      .card.blank {
+        border: 0.6pt dashed #ccc;
+      }
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 3mm;
+        font-family: "Creepster", cursive;
+        font-size: 13pt;
+        letter-spacing: 0.5px;
+      }
+      .card-header .cname {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1;
+      }
+      .card-header .ccost {
+        font-size: 10pt;
+        color: var(--accent);
+        white-space: nowrap;
+      }
+      .art-box {
+        flex: 1;
+        margin: 1.6mm 0;
+        border: 0.6pt solid #bbb;
+        border-radius: 1mm;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 2mm;
+      }
+      .art-box span {
+        font-size: 6.5pt;
+        color: #c9c9c9;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        font-family: "Comic Neue";
+      }
+      .type-line {
+        font-family: "Special Elite", monospace;
+        font-size: 8pt;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+        border-top: 0.8pt solid var(--ink);
+        border-bottom: 0.8pt solid var(--ink);
+        padding: 1mm 0.5mm;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .text-box {
+        font-family: "Special Elite", monospace;
+        font-size: 7.3pt;
+        line-height: 1.32;
+        padding: 1.4mm 0.8mm 0.5mm;
+        min-height: 24mm;
+        overflow: hidden;
+      }
+      .text-box .rules {
+        white-space: pre-wrap;
+      }
+      .text-box .flavor {
+        font-style: italic;
+        color: #333;
+        margin-top: 1.4mm;
+        padding-top: 1.2mm;
+        border-top: 0.5pt solid #ddd;
+        white-space: pre-wrap;
+      }
+      .card-header .ccost i.ms,
+      .card-header .ccost img.sym-icon {
+        font-size: 9pt;
+        width: 9pt;
+        height: 9pt;
+        vertical-align: -0.05em;
+        margin-left: 0.3mm;
+        object-fit: contain;
+        display: inline-block;
+      }
+      .text-box i.ms,
+      .text-box img.sym-icon {
+        font-size: 1em;
+        width: 1em;
+        height: 1em;
+        vertical-align: -0.12em;
+        object-fit: contain;
+        display: inline-block;
+      }
+      .card.distressed .card-header,
+      .card.distressed .type-line,
+      .card.distressed .text-box,
+      .card.distressed .pt-box {
+        color: #3a352e;
+      }
+      .card.distressed {
+        filter: contrast(0.88) brightness(0.96) saturate(0.85);
+      }
+      .card.distressed::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.5;
+        mix-blend-mode: multiply;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      }
+      .card.distressed::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        box-shadow:
+          inset 0 0 7mm rgba(60, 50, 40, 0.35),
+          inset 0 0 1.5mm rgba(60, 50, 40, 0.4);
+      }
+      .pt-box {
+        position: absolute;
+        bottom: 2mm;
+        right: 2mm;
+        font-family: "Creepster", cursive;
+        font-size: 10pt;
+        background: #fff;
+        border: 1pt solid var(--ink);
+        border-radius: 1mm;
+        padding: 0.5mm 2mm;
+      }
+      .page-num {
+        position: absolute;
+        bottom: 2mm;
+        right: 3mm;
+        font-size: 7pt;
+        color: #ccc;
+      }
+
+      @media print {
+        body {
+          background: #fff;
+        }
+        .panel {
+          display: none;
+        }
+        .sheets {
+          padding: 0;
+          gap: 0;
+        }
+        .page {
+          box-shadow: none;
+          margin: 0;
+          page-break-after: always;
+        }
+        .page:last-child {
+          page-break-after: auto;
+        }
+      }
+      @page {
+        size: A4;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="panel">
+      <h1>CARD TEXT SHEET BUILDER</h1>
+      <p class="sub">
+        Type in card details, add as many as you like, then print. Cards lay out
+        9-per-A4-page at true 63×88mm size, with a blank guide box where the art
+        goes so you can draw straight onto the printed sheet (or trace it onto
+        card stock).
+      </p>
+
+      <div class="form-grid">
+        <div>
+          <label>Card name</label>
+          <input id="f-name" placeholder="Jeska's Will" />
+        </div>
+        <div>
+          <label>Mana cost</label>
+          <input id="f-cost" placeholder="{2}{R}" />
+        </div>
+        <div>
+          <label>Type</label>
+          <input id="f-type" placeholder="Creature" />
+        </div>
+        <div>
+          <label>Power/Toughness</label>
+          <input id="f-pt" placeholder="2/2" />
+        </div>
+        <div class="full">
+          <label>Subtype</label>
+          <input id="f-subtype" placeholder="Rabbit" />
+        </div>
+        <div class="full">
+          <label>Rules text</label>
+          <textarea
+            id="f-rules"
+            placeholder="{T}: Add {R}.&#10;Choose one. If you control a commander as you cast this spell, you may choose both.&#10;• Add {R} for each card in target opponent's hand.&#10;• Exile the top three cards of your library. You may play them this turn."
+          ></textarea>
+          <p style="font-size: 11px; color: #777; margin: 4px 0 0">
+            Symbols: type codes in curly braces and they render as icons —
+            <code>{W}{U}{B}{R}{G}</code> colors, <code>{C}</code> colorless,
+            <code>{T}</code> tap, <code>{Q}</code> untap, <code>{X}</code>,
+            <code>{0}</code>–<code>{20}</code> generic,
+            <code>{W/U}</code> hybrid, <code>{R/P}</code> phyrexian. Works in
+            mana cost and rules text.
+          </p>
+        </div>
+        <div class="full">
+          <label>Flavor text (optional)</label>
+          <textarea
+            id="f-flavor"
+            placeholder='"Gather your strength. Prepare yourself." —Jeska, to Radha'
+            style="min-height: 32px"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="btnrow">
+        <button id="add-btn" type="button">+ Add Card</button>
+        <button id="clear-form-btn" type="button" class="ghost">
+          Clear Form
+        </button>
+      </div>
+
+      <hr style="border: none; border-top: 2px dashed #ccc; margin: 24px 0" />
+
+      <h2
+        style="
+          font-family: &quot;Bangers&quot;, cursive;
+          font-size: 20px;
+          margin: 0 0 4px;
+        "
+      >
+        Bulk Import (Scryfall lookup)
+      </h2>
+      <p class="sub" style="margin-bottom: 10px">
+        Paste a decklist, one card per line. Quantities are optional — real card
+        text, mana cost (with symbols), type/subtype, P/T, and flavor text are
+        pulled in automatically.
+      </p>
+      <textarea
+        id="f-bulk"
+        style="min-height: 110px"
+        placeholder="1 Sol Ring&#10;1 Skullclamp&#10;1 Hare Apparent&#10;Lightning Bolt"
+      ></textarea>
+      <div class="btnrow">
+        <button id="import-btn" type="button">⇩ Import from Scryfall</button>
+      </div>
+      <div
+        id="import-status"
+        style="font-size: 13px; margin-top: 8px; color: #555"
+      ></div>
+
+      <div class="list">
+        <h2>Your Cards <span class="count-badge" id="count">0</span></h2>
+        <label
+          style="
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 10px;
+            text-transform: none;
+            font-size: 13px;
+            font-weight: 400;
+          "
+        >
+          <input
+            type="checkbox"
+            id="f-flavor-global"
+            checked
+            style="width: auto"
+          />
+          Show flavour text on cards (uncheck a card below to override
+          individually)
+        </label>
+        <div id="card-list"></div>
+        <div class="btnrow">
+          <button id="print-btn" type="button" class="secondary">
+            🖨 Print / Save as PDF
+          </button>
+          <button id="clear-all-btn" type="button" class="ghost">
+            Remove All
+          </button>
+        </div>
+        <label
+          style="
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            text-transform: none;
+            font-size: 13px;
+            font-weight: 400;
+          "
+        >
+          <input type="checkbox" id="f-distressed" style="width: auto" />
+          Aged / faded print look (adds grain + muted ink, like a worn
+          photocopy)
+        </label>
+      </div>
+    </div>
+
+    <div class="sheets" id="sheets"></div>
+
+    <script>
+      let cards = [];
+
+      const el = (id) => document.getElementById(id);
+
+      el("add-btn").addEventListener("click", () => {
+        const name = el("f-name").value.trim();
+        const cost = el("f-cost").value.trim();
+        const type = el("f-type").value.trim();
+        const subtype = el("f-subtype").value.trim();
+        const pt = el("f-pt").value.trim();
+        const rules = el("f-rules").value.trim();
+        const flavor = el("f-flavor").value.trim();
+
+        if (!name) {
+          el("f-name").focus();
+          return;
+        }
+
+        cards.push({
+          name,
+          cost,
+          type,
+          subtype,
+          pt,
+          rules,
+          flavor,
+          showFlavor: true,
+        });
+        clearForm();
+        render();
+      });
+
+      el("clear-form-btn").addEventListener("click", clearForm);
+      function clearForm() {
+        [
+          "f-name",
+          "f-cost",
+          "f-type",
+          "f-subtype",
+          "f-pt",
+          "f-rules",
+          "f-flavor",
+        ].forEach((id) => (el(id).value = ""));
+        el("f-name").focus();
+      }
+
+      function buildTypeLine(type, subtype) {
+        return subtype ? `${type} — ${subtype}` : type || "";
+      }
+
+      el("clear-all-btn").addEventListener("click", () => {
+        if (cards.length && !confirm("Remove all " + cards.length + " cards?"))
+          return;
+        cards = [];
+        render();
+      });
+
+      el("print-btn").addEventListener("click", () => window.print());
+      el("f-distressed").addEventListener("change", render);
+      el("f-flavor-global").addEventListener("change", render);
+
+      function toggleCardFlavor(i) {
+        cards[i].showFlavor = !cards[i].showFlavor;
+        render();
+      }
+
+      function parseDecklist(text) {
+        return text
+          .split("\n")
+          .map((l) => l.trim())
+          .filter((l) => l.length > 0)
+          .map((line) => {
+            const m = line.match(/^(\d+)\s*[xX]?\s+(.+)$/);
+            if (m) {
+              return { qty: parseInt(m[1], 10) || 1, name: m[2].trim() };
+            }
+            return { qty: 1, name: line.replace(/^[xX]\s+/, "").trim() };
+          })
+          .filter((e) => e.name.length > 0);
+      }
+
+      function cardTextFromScryfall(card) {
+        // Handle double-faced / split / adventure cards by using the front face
+        const face =
+          card.card_faces && card.card_faces.length ? card.card_faces[0] : null;
+        const cost = (face ? face.mana_cost : card.mana_cost) || "";
+        const fullTypeLine =
+          card.type_line || (face ? face.type_line : "") || "";
+        const [type, subtype] = fullTypeLine
+          .split("—")
+          .map((s) => (s || "").trim());
+        const rules = (face ? face.oracle_text : card.oracle_text) || "";
+        const flavor =
+          (face ? face.flavor_text : card.flavor_text) ||
+          card.flavor_text ||
+          "";
+        const power = face ? face.power : card.power;
+        const toughness = face ? face.toughness : card.toughness;
+        const loyalty = face ? face.loyalty : card.loyalty;
+        let pt = "";
+        if (power !== undefined && toughness !== undefined)
+          pt = `${power}/${toughness}`;
+        else if (loyalty !== undefined) pt = `${loyalty}`;
+        return {
+          name: card.name,
+          cost: cost,
+          type: type || "",
+          subtype: subtype || "",
+          pt,
+          rules,
+          flavor,
+          showFlavor: true,
+        };
+      }
+
+      async function fetchScryfallBatch(names) {
+        const res = await fetch("https://api.scryfall.com/cards/collection", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            identifiers: names.map((n) => ({ name: n })),
+          }),
+        });
+        if (!res.ok)
+          throw new Error("Scryfall request failed (" + res.status + ")");
+        return res.json();
+      }
+
+      el("import-btn").addEventListener("click", async () => {
+        const entries = parseDecklist(el("f-bulk").value);
+        if (entries.length === 0) return;
+
+        const statusEl = el("import-status");
+        const importBtn = el("import-btn");
+        importBtn.disabled = true;
+        statusEl.textContent = `Looking up ${entries.length} card${entries.length > 1 ? "s" : ""} on Scryfall…`;
+
+        const uniqueNames = [...new Set(entries.map((e) => e.name))];
+        const found = new Map();
+        const notFound = [];
+
+        try {
+          for (let i = 0; i < uniqueNames.length; i += 75) {
+            const batch = uniqueNames.slice(i, i + 75);
+            const data = await fetchScryfallBatch(batch);
+            (data.data || []).forEach((card) =>
+              found.set(card.name.toLowerCase(), card),
+            );
+            (data.not_found || []).forEach((nf) => notFound.push(nf.name));
+          }
+
+          let addedCount = 0;
+          entries.forEach((entry) => {
+            // Scryfall matches loosely (fuzzy-ish on exact endpoint is strict, so also try partial match)
+            let card = found.get(entry.name.toLowerCase());
+            if (!card) {
+              // fallback: find a found card whose name contains the search term
+              for (const c of found.values()) {
+                if (c.name.toLowerCase().includes(entry.name.toLowerCase())) {
+                  card = c;
+                  break;
+                }
+              }
+            }
+            if (card) {
+              const text = cardTextFromScryfall(card);
+              for (let n = 0; n < entry.qty; n++) cards.push(text);
+              addedCount += entry.qty;
+            } else if (
+              !notFound.some(
+                (nfName) => nfName.toLowerCase() === entry.name.toLowerCase(),
+              )
+            ) {
+              notFound.push(entry.name);
+            }
+          });
+
+          render();
+          el("f-bulk").value = "";
+
+          if (notFound.length) {
+            statusEl.innerHTML = `Added ${addedCount} card(s). Couldn't find: ${notFound.map(escapeHtml).join(", ")} — check spelling or add manually above.`;
+            statusEl.style.color = "#b03a2e";
+          } else {
+            statusEl.textContent = `Added ${addedCount} card(s) successfully.`;
+            statusEl.style.color = "#2e7d32";
+          }
+        } catch (err) {
+          statusEl.textContent = "Error reaching Scryfall: " + err.message;
+          statusEl.style.color = "#b03a2e";
+        } finally {
+          importBtn.disabled = false;
+        }
+      });
+
+      function removeCard(i) {
+        cards.splice(i, 1);
+        render();
+      }
+
+      function escapeHtml(s) {
+        return (s || "").replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      }
+
+      // Map symbol codes (uppercase, as written inside {}) to your own local image
+      // files. Add more here any time — e.g. 'Q': 'images/untap.png' — and it'll
+      // be picked up automatically wherever that code appears in cost/rules text.
+      const customSymbolImages = {
+        T: "images/tap.png",
+        Q: "images/untap.png",
+        W: "images/white.png",
+        U: "images/blue.png",
+        B: "images/black.png",
+        R: "images/red.png",
+        G: "images/green.png",
+        C: "images/colorless.png",
+      };
+
+      function manaClass(sym) {
+        let s = sym.toLowerCase().trim().replace(/\//g, "");
+        return "ms-" + s;
+      }
+
+      // If a custom image fails to load (e.g. previewing this file somewhere that
+      // can't see your images/ folder), fall back to the Mana font icon instead.
+      function handleImgFallback(img, code) {
+        const i = document.createElement("i");
+        i.className = "ms " + manaClass(code);
+        i.title = "{" + code + "}";
+        img.replaceWith(i);
+      }
+
+      // Converts inline {W}{U}{2}{T} style codes into icons — either your own
+      // custom image (if mapped in customSymbolImages) or a Mana-font glyph —
+      // escaping everything else as plain text so no HTML can be injected.
+      function symbolizeText(text) {
+        if (!text) return "";
+        const parts = text.split(/(\{[^{}]+\})/g);
+        return parts
+          .map((part) => {
+            const m = part.match(/^\{([^{}]+)\}$/);
+            if (m) {
+              const code = m[1];
+              const upper = code.toUpperCase();
+              const escCode = escapeHtml(code);
+              if (customSymbolImages[upper]) {
+                const src = customSymbolImages[upper];
+                return `<img src="${escapeHtml(src)}" class="sym-icon" alt="{${escCode}}" title="{${escCode}}" onerror="handleImgFallback(this,'${upper}')">`;
+              }
+              return `<i class="ms ${manaClass(code)}" title="{${escCode}}"></i>`;
+            }
+            return escapeHtml(part);
+          })
+          .join("");
+      }
+
+      function plainSymbols(text) {
+        return (text || "").replace(/\{([^{}]+)\}/g, "$1");
+      }
+
+      function render() {
+        // list panel
+        el("count").textContent = cards.length;
+        const listEl = el("card-list");
+        if (cards.length === 0) {
+          listEl.innerHTML =
+            '<div class="empty-note">No cards added yet — fill out the form above and hit "Add Card".</div>';
+        } else {
+          listEl.innerHTML = cards
+            .map(
+              (c, i) => `
+      <div class="card-row">
+        <div class="meta"><b>${escapeHtml(c.name)}</b>${c.cost ? " — " + escapeHtml(plainSymbols(c.cost)) : ""}${c.type ? " · " + escapeHtml(buildTypeLine(c.type, c.subtype)) : ""}${c.pt ? " · " + escapeHtml(c.pt) : ""}</div>
+        <div class="actions" style="display:flex;align-items:center;gap:10px;">
+          <label style="display:flex;align-items:center;gap:4px;text-transform:none;font-size:12px;font-weight:400;white-space:nowrap;">
+            <input type="checkbox" ${c.flavor ? "" : "disabled"} ${c.showFlavor !== false ? "checked" : ""} onchange="toggleCardFlavor(${i})" style="width:auto;">
+            Flavour
+          </label>
+          <button class="ghost" type="button" onclick="removeCard(${i})">Remove</button>
+        </div>
+      </div>
+    `,
+            )
+            .join("");
+        }
+
+        // print sheets
+        const sheetsEl = el("sheets");
+        sheetsEl.innerHTML = "";
+        if (cards.length === 0) return;
+
+        const perPage = 9;
+        const totalSlots = Math.ceil(cards.length / perPage) * perPage;
+
+        for (let p = 0; p < totalSlots / perPage; p++) {
+          const page = document.createElement("div");
+          page.className = "page";
+          for (let s = 0; s < perPage; s++) {
+            const idx = p * perPage + s;
+            const c = cards[idx];
+            const cardDiv = document.createElement("div");
+            const distressed = el("f-distressed").checked;
+            const flavorGlobalOn = el("f-flavor-global").checked;
+            if (c) {
+              cardDiv.className = "card" + (distressed ? " distressed" : "");
+              const showFlavor =
+                flavorGlobalOn && c.showFlavor !== false && c.flavor;
+              cardDiv.innerHTML = `
+          <div class="card-header">
+            <span class="cname">${escapeHtml(c.name)}</span>
+            <span class="ccost">${symbolizeText(c.cost)}</span>
+          </div>
+          <div class="art-box"><span>art</span></div>
+          <div class="type-line">${escapeHtml(buildTypeLine(c.type, c.subtype))}</div>
+          <div class="text-box">
+            <div class="rules">${symbolizeText(c.rules)}</div>
+            ${showFlavor ? `<div class="flavor">${escapeHtml(c.flavor)}</div>` : ""}
+          </div>
+          ${c.pt ? `<div class="pt-box">${escapeHtml(c.pt)}</div>` : ""}
+        `;
+            } else {
+              cardDiv.className = "card blank";
+            }
+            page.appendChild(cardDiv);
+          }
+          sheetsEl.appendChild(page);
+        }
+      }
+
+      render();
+    </script>
+  </body>
+</html>
